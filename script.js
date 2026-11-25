@@ -63,7 +63,7 @@
     const b = Body.create({ parts: [c1, c2, tri], restitution: 0, friction: 0, frictionStatic: 0, frictionAir: 0 });
     Body.scale(b, HEART_SCALE, HEART_SCALE);
     Body.setMass(b, 20);
-    Body.setPosition(b, { x: CX, y: 300 });
+    Body.setPosition(b, { x: left ? 128 : 384, y: 225 });
     b.heartInfo = {
       w: b.bounds.max.x - b.bounds.min.x,
       h: b.bounds.max.y - b.bounds.min.y,
