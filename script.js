@@ -89,6 +89,8 @@
     const ctex = {}, urls = {}, photoCircles = [];
     let loaded = 0;
     function applyBubbles() {
+      const ok = faces.filter(function (k) { return urls[k]; });
+      if (!ok.length) return;
       const items = [];
       document.querySelectorAll("img[data-face]").forEach(function (img) {
         const b = img.parentNode;
@@ -97,14 +99,14 @@
       const area = document.querySelector(".bubbles");
       const lim = 0.3 * Math.min(area.offsetWidth, area.offsetHeight);
       const cnt = {};
-      faces.forEach(function (k) { cnt[k] = 0; });
+      ok.forEach(function (k) { cnt[k] = 0; });
       items.forEach(function (it) {
         const used = {};
         items.forEach(function (o) {
           if (o.face && Math.hypot(o.x - it.x, o.y - it.y) < lim) used[o.face] = 1;
         });
-        const opts = faces.filter(function (k) { return !used[k]; });
-        const pool = opts.length ? opts : faces;
+        const opts = ok.filter(function (k) { return !used[k]; });
+        const pool = opts.length ? opts : ok;
         pool.sort(function (a, b) { return cnt[a] - cnt[b]; });
         it.face = pool[0]; cnt[it.face]++;
         it.img.dataset.face = it.face;
@@ -147,6 +149,10 @@
         urls[k] = c.toDataURL();
         if (++loaded === faces.length) applyBubbles();
       };
+      im.onerror = function () {
+        console.warn("Foto tidak ketemu:", FS[k]);
+        if (++loaded === faces.length) applyBubbles();
+      };
       im.src = FS[k];
     });
     Matter.Events.on(render, "afterRender", function () {
@@ -165,8 +171,10 @@
     setTimeout(function () {
       let t = 0;
       const iv = setInterval(function () {
+        const av = faces.filter(function (f2) { return tex[f2]; });
+        if (!av.length) return;
         const b = makeHeart();
-        b.face = faces[(t * 4 + Math.floor(Math.random() * 3)) % faces.length];
+        b.face = av[(t * 4 + Math.floor(Math.random() * 3)) % av.length];
         Body.setAngle(b, Math.random() * Math.PI * 2);
         Body.setVelocity(b, { x: Common.random(-4, 4), y: Common.random(-4, -1) });
         Composite.add(world, b);
@@ -179,7 +187,9 @@
     setTimeout(function () {
       let t = 0;
       const iv = setInterval(function () {
-        const k = faces[t % faces.length];
+        const avail = faces.filter(function (f2) { return ctex[f2]; });
+        if (!avail.length) return;
+        const k = avail[t % avail.length];
         const col = Common.choose(COLORS);
         const render2 = ctex[k]
           ? { sprite: { texture: ctex[k], xScale: (2 * CIRCLE_R) / 192, yScale: (2 * CIRCLE_R) / 192 } }
