@@ -8,6 +8,8 @@
   const HEART_D = "M384,46.469c-70.688,0-128,57.313-128,128.016c0-70.703-57.313-128.016-128-128.016S0,103.781,0,174.484c0,66.484,31.313,193.391,218.563,276.234c11.844,5.25,35.703,14.469,35.703,14.469c0.547,0.219,1.141,0.344,1.734,0.344s1.188-0.125,1.734-0.344c0,0,23.859-9.219,35.703-14.469C480.688,367.875,512,240.969,512,174.484C512,103.781,454.688,46.469,384,46.469z";
   const COLORS = ["pink", "deeppink", "deeppink", "hotpink", "hotpink", "lightpink", "magenta", "orchid"];
   const CX = 256, HEART_SCALE = 0.25, CIRCLE_R = 19, BIG_HEARTS = 2;
+  // nomor foto yang TIDAK boleh jadi love besar (tetap muncul sebagai bulatan kecil), contoh: [4] untuk Face4.png
+  const NO_BIG = [];
 
   //PURE-START
   function heartPoints() {
@@ -171,7 +173,7 @@
     setTimeout(function () {
       let t = 0;
       const iv = setInterval(function () {
-        const av = faces.filter(function (f2) { return tex[f2]; });
+        const av = faces.filter(function (f2) { return tex[f2] && NO_BIG.indexOf(f2) < 0; });
         if (!av.length) return;
         const b = makeHeart();
         b.face = av[(t * 4 + Math.floor(Math.random() * 3)) % av.length];
