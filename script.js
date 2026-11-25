@@ -3,13 +3,13 @@
   const { Engine, Render, Runner, Common, MouseConstraint, Mouse, Composite, Bodies, Body } = Matter;
   const W = 512;
   const FS = window.FACES || {};
-  for (let n = 1; n <= 10; n++) if (!FS[n]) FS[n] = "img/face" + n + ".png";
+  for (let n = 1; n <= 10; n++) if (!FS[n]) FS[n] = "Face" + n + ".png";
   const faces = Object.keys(FS).map(Number);
   const HEART_D = "M384,46.469c-70.688,0-128,57.313-128,128.016c0-70.703-57.313-128.016-128-128.016S0,103.781,0,174.484c0,66.484,31.313,193.391,218.563,276.234c11.844,5.25,35.703,14.469,35.703,14.469c0.547,0.219,1.141,0.344,1.734,0.344s1.188-0.125,1.734-0.344c0,0,23.859-9.219,35.703-14.469C480.688,367.875,512,240.969,512,174.484C512,103.781,454.688,46.469,384,46.469z";
   const COLORS = ["pink", "deeppink", "deeppink", "hotpink", "hotpink", "lightpink", "magenta", "orchid"];
   const CX = 256, HEART_SCALE = 0.25, CIRCLE_R = 19, BIG_HEARTS = 2;
 
-  
+  //PURE-START
   function heartPoints() {
     const raw = [];
     const N = 180;
@@ -72,7 +72,7 @@
     };
     return b;
   }
-  
+  //PURE-END
 
   function start() {
     const engine = Engine.create(), world = engine.world;
@@ -112,7 +112,7 @@
       });
     }
 
-    
+    // photo hearts
     const tex = {}, hearts = [];
     const HP = new Path2D(HEART_D);
     faces.forEach(function (k) {
@@ -175,7 +175,7 @@
       }, 780);
     }, 220);
 
-    
+    // photo circles
     setTimeout(function () {
       let t = 0;
       const iv = setInterval(function () {
