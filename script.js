@@ -1,4 +1,4 @@
-"use strict";
+v"use strict";
 (function () {
   const { Engine, Render, Runner, Common, MouseConstraint, Mouse, Composite, Bodies, Body } = Matter;
   const W = 512;
@@ -172,11 +172,15 @@
     });
     setTimeout(function () {
       let t = 0;
+      const bigUsed = [];
       const iv = setInterval(function () {
         const av = faces.filter(function (f2) { return tex[f2] && NO_BIG.indexOf(f2) < 0; });
         if (!av.length) return;
         const b = makeHeart();
-        b.face = av[(t * 4 + Math.floor(Math.random() * 3)) % av.length];
+        const pool = av.filter(function (f2) { return bigUsed.indexOf(f2) < 0; });
+        b.face = (pool.length ? pool : av)[Math.floor(Math.random() * (pool.length ? pool : av).length)];
+        bigUsed.push(b.face);
+        console.log("Love besar pakai foto nomor " + b.face + " (" + FS[b.face] + ")");
         const left = t % 2 === 0;
         Body.setPosition(b, { x: left ? 128 : 384, y: 225 });
         Body.setAngle(b, Common.random(-0.3, 0.3));
