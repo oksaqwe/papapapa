@@ -183,7 +183,7 @@
         hearts.push(b);
         if (++t >= BIG_HEARTS) clearInterval(iv);
       }, 780);
-    }, 220);
+    }, 2000 + Math.round(COUNT * 90 * 0.85)); // muncul di akhir, saat bulatan kecil hampir penuh
 
     // photo circles
     setTimeout(function () {
