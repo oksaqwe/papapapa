@@ -244,17 +244,48 @@
     audio.preload = "auto";
     const btn = document.createElement("button");
     btn.setAttribute("aria-label", "musik");
-    btn.style.cssText = "position:fixed;right:14px;bottom:14px;z-index:1000;width:44px;height:44px;border-radius:50%;border:0;background:rgba(255,255,255,.18);color:#fff;font-size:20px;cursor:pointer;backdrop-filter:blur(6px)";
+    btn.style.cssText = "position:fixed;right:14px;bottom:14px;z-index:1000;width:68px;height:68px;border-radius:50%;border:0;background:rgba(255,255,255,.25);color:#fff;font-size:34px;line-height:68px;padding:0;cursor:pointer;backdrop-filter:blur(6px);-webkit-tap-highlight-color:transparent";
     function icon() { btn.textContent = audio.paused ? "\uD83D\uDD07" : "\uD83D\uDD0A"; }
     function play() { const p = audio.play(); if (p && p.catch) p.catch(function () {}); }
     btn.onclick = function () { if (audio.paused) play(); else audio.pause(); };
     ["play", "pause"].forEach(function (ev) { audio.addEventListener(ev, icon); });
     audio.addEventListener("error", function () { btn.style.display = "none"; });
-    ["pointerdown", "keydown", "touchstart"].forEach(function (ev) {
-      window.addEventListener(ev, play, { once: true });
+    // HP butuh gesture "selesai" (touchend/click), jadi dicoba terus sampai benar-benar berbunyi
+    const unlockEvents = ["touchend", "pointerup", "click", "keydown"];
+    function unlock() { if (audio.paused) play(); }
+    unlockEvents.forEach(function (ev) {
+      window.addEventListener(ev, unlock, true);
     });
-    window.addEventListener("load", function () { document.body.appendChild(btn); icon(); play(); });
+    audio.addEventListener("playing", function () {
+      unlockEvents.forEach(function (ev) { window.removeEventListener(ev, unlock, true); });
+    });
+    window.addEventListener("load", function () { document.body.appendChild(btn); icon(); });
+    window.__playMusic = play;
   })();
 
-  window.onload = start;
+  // layar "Ketuk untuk mulai": ketukan ini jadi gesture yang membuka izin musik di HP
+  window.addEventListener("load", function () {
+    const st = document.createElement("style");
+    st.textContent = "@keyframes tapPulse{0%,100%{opacity:.45}50%{opacity:1}}";
+    document.head.appendChild(st);
+    const ov = document.createElement("div");
+    ov.style.cssText = "position:fixed;inset:0;z-index:2000;background:#000;display:flex;align-items:center;justify-content:center;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:opacity .6s";
+    const tx = document.createElement("div");
+    tx.textContent = "Ketuk untuk mulai";
+    tx.style.cssText = "color:#fff;font:400 22px/1.2 system-ui,-apple-system,Segoe UI,sans-serif;letter-spacing:.12em;animation:tapPulse 1.8s ease-in-out infinite";
+    ov.appendChild(tx);
+    document.body.appendChild(ov);
+    let began = false;
+    function begin() {
+      if (began) return;
+      began = true;
+      if (window.__playMusic) window.__playMusic();
+      ov.style.opacity = "0";
+      ov.style.pointerEvents = "none";
+      setTimeout(function () { ov.remove(); }, 650);
+      start();
+    }
+    ov.addEventListener("click", begin);
+    ov.addEventListener("touchend", function (e) { e.preventDefault(); begin(); });
+  });
 })();
