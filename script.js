@@ -175,8 +175,10 @@
         if (!av.length) return;
         const b = makeHeart();
         b.face = av[(t * 4 + Math.floor(Math.random() * 3)) % av.length];
-        Body.setAngle(b, Math.random() * Math.PI * 2);
-        Body.setVelocity(b, { x: Common.random(-4, 4), y: Common.random(-4, -1) });
+        const left = t % 2 === 0;
+        Body.setPosition(b, { x: left ? 128 : 384, y: 225 });
+        Body.setAngle(b, Common.random(-0.3, 0.3));
+        Body.setVelocity(b, { x: left ? 1.2 : -1.2, y: Common.random(-0.8, 0.8) });
         Composite.add(world, b);
         hearts.push(b);
         if (++t >= BIG_HEARTS) clearInterval(iv);
@@ -235,5 +237,24 @@
     Render.lookAt(render, { min: { x: 0, y: 0 }, max: { x: W, y: W } });
     Render.run(render);
   }
+  
+  (function () {
+    const audio = new Audio("music.mp3");
+    audio.loop = true;
+    audio.preload = "auto";
+    const btn = document.createElement("button");
+    btn.setAttribute("aria-label", "musik");
+    btn.style.cssText = "position:fixed;right:14px;bottom:14px;z-index:1000;width:44px;height:44px;border-radius:50%;border:0;background:rgba(255,255,255,.18);color:#fff;font-size:20px;cursor:pointer;backdrop-filter:blur(6px)";
+    function icon() { btn.textContent = audio.paused ? "\uD83D\uDD07" : "\uD83D\uDD0A"; }
+    function play() { const p = audio.play(); if (p && p.catch) p.catch(function () {}); }
+    btn.onclick = function () { if (audio.paused) play(); else audio.pause(); };
+    ["play", "pause"].forEach(function (ev) { audio.addEventListener(ev, icon); });
+    audio.addEventListener("error", function () { btn.style.display = "none"; });
+    ["pointerdown", "keydown", "touchstart"].forEach(function (ev) {
+      window.addEventListener(ev, play, { once: true });
+    });
+    window.addEventListener("load", function () { document.body.appendChild(btn); icon(); play(); });
+  })();
+
   window.onload = start;
 })();
