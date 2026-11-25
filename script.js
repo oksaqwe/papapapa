@@ -1,4 +1,4 @@
-v"use strict";
+"use strict";
 (function () {
   const { Engine, Render, Runner, Common, MouseConstraint, Mouse, Composite, Bodies, Body } = Matter;
   const W = 512;
