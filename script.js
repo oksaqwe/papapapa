@@ -63,7 +63,7 @@
     const b = Body.create({ parts: [c1, c2, tri], restitution: 0, friction: 0, frictionStatic: 0, frictionAir: 0 });
     Body.scale(b, HEART_SCALE, HEART_SCALE);
     Body.setMass(b, 20);
-    Body.setPosition(b, { x: left ? 128 : 384, y: 225 });
+    Body.setPosition(b, { x: CX, y: 300 });
     b.heartInfo = {
       w: b.bounds.max.x - b.bounds.min.x,
       h: b.bounds.max.y - b.bounds.min.y,
@@ -237,7 +237,7 @@
     Render.lookAt(render, { min: { x: 0, y: 0 }, max: { x: W, y: W } });
     Render.run(render);
   }
-  
+  // musik latar: taruh file music.mp3 di folder yang sama dengan index.html
   (function () {
     const audio = new Audio("music.mp3");
     audio.loop = true;
